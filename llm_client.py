@@ -7,11 +7,13 @@ import yaml
 from pathlib import Path
 from openai import OpenAI
 
+_CONFIG_LOCAL = Path(__file__).parent / "config.local.yaml"
 _CONFIG_PATH = Path(__file__).parent / "config.yaml"
 
 
 def _load_config() -> dict:
-    with open(_CONFIG_PATH, encoding="utf-8") as f:
+    path = _CONFIG_LOCAL if _CONFIG_LOCAL.exists() else _CONFIG_PATH
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 

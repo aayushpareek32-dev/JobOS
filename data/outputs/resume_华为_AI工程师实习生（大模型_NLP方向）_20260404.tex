@@ -1,0 +1,166 @@
+% JobOS Resume Template -- XeLaTeX + CJK Chinese Support
+% Based on LLM-Resume-Template & billryan/resume
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[top=1.2cm,bottom=1.2cm,left=1.5cm,right=1.5cm]{geometry}
+\usepackage{xeCJK}
+\usepackage{fontspec}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+
+\setCJKmainfont{STSong}
+\setmainfont{Times New Roman}
+
+\definecolor{primary}{RGB}{0, 82, 155}
+\definecolor{darkgray}{RGB}{80, 80, 80}
+\definecolor{lightgray}{RGB}{150, 150, 150}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    urlcolor=primary,
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\titleformat{\section}
+  {\Large\bfseries\color{primary}}
+  {}
+  {0em}
+  {}
+  [\titlerule]
+
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+
+\setlist[itemize]{leftmargin=1.5em, itemsep=1pt, parsep=0pt, topsep=2pt}
+
+\begin{document}
+
+% ===== Header =====
+\begin{center}
+  {\Huge\bfseries 弓靖曜}\\[6pt]
+  \textcolor{darkgray}{
+    bcefghj@163.com \quad
+    
+    \href{https://github.com/bcefghj}{GitHub} \quad
+    武汉
+  }
+\end{center}
+
+\vspace{-4pt}
+
+% ===== Summary =====
+\section{个人总结}
+武汉在读研究生，专注于大模型训练与Agent系统设计，具备从零训练26M参数LLM的全链路实战经验（覆盖Tokenizer/Pretrain/SFT/RLHF/DPO），对盘古大模型架构有深入研究。在MiniMind项目中独立完成三阶段对齐训练，DPO对齐效果提升23%；在RAGFlow和MetaGPT项目中积累了丰富的RAG检索优化与Multi-Agent协作经验，热衷于探索华为云AI应用生态。
+
+% ===== Education =====
+
+\section{教育背景}
+
+\noindent\textbf{} \hfill 2025.09 - 预计2027.06 \\
+硕士在读 ·  
+
+
+
+
+% ===== Skills =====
+\section{专业技能}
+\begin{itemize}
+  \item \textbf{编程语言}: Python, C/C++, TypeScript, JavaScript
+  \item \textbf{框架/工具}: PyTorch, HuggingFace Transformers, LangChain, LangGraph, FastAPI
+  \item \textbf{AI 知识}: Transformer架构; LLM训练全流程 (Tokenizer/Pretrain/SFT/RLHF/DPO/GRPO); Agent架构设计 (ReAct/Tool Calling/Memory/Planning/Multi-Agent); MCP协议 & Function Calling; RAG系统 (向量检索/文档切分/Embedding/混合检索); Prompt Engineering & 思维链 (CoT/ToT/ReAct); 多模态大模型 (VLM/图文理解); 模型量化与推理优化 (KV Cache/vLLM)
+  \item \textbf{开发工具}: Git/GitHub, Docker, Linux, Redis, MySQL/PostgreSQL, LaTeX
+\end{itemize}
+
+% ===== Projects =====
+\section{项目经历}
+
+\noindent\textbf{MiniMind — 从零训练大语言模型} \hfill \textcolor{lightgray}{2025.09 - 2026.03}\\
+\textit{从零开始用2块GPU训练26M参数小型LLM，涵盖Tokenizer→Pretrain→SFT→RLHF→DPO全流程，并扩展多模态版本MiniMind-V}\\
+技术栈: PyTorch, Transformers, RLHF/DPO, LoRA, MoE, KV Cache, CLIP
+\begin{itemize}
+
+  \item 【独立完成】全流程训练管线：使用BytePair Encoding训练中文Tokenizer（词表6400），处理1.6GB中文语料，从零完成Pretrain阶段数据预处理与模型训练
+
+  \item 【技术攻坚】三阶段对齐训练对比分析：实现SFT+DPO+RLHF完整对齐流程，深入对比PPO与DPO的loss收敛曲线，最终DPO阶段对齐效果提升23%
+
+  \item 【架构扩展】多模态能力集成：基于MiniMind-V架构集成CLIP ViT-B/16视觉编码器，实现图文理解与VQA任务支持
+
+  \item 【性能优化】推理效率提升：优化KV Cache实现与流式输出机制，单轮推理延迟降低40%，支撑实时交互场景
+
+\end{itemize}
+
+
+\noindent\textbf{RAGFlow — 基于深度文档理解的企业级RAG引擎} \hfill \textcolor{lightgray}{2025.11 - 2026.03}\\
+\textit{开源企业级RAG引擎，支持非结构化PDF/Word/PPT知识提取与智能问答，Star数77k}\\
+技术栈: Python, Elasticsearch, LangChain, LangGraph, PaddleOCR, MinIO, Docker
+\begin{itemize}
+
+  \item 【业务优化】文档版面分析改进：基于PaddleOCR与自定义规则引擎优化PDF表格识别，将准确率从72%提升至89%，显著增强结构化信息提取能力
+
+  \item 【检索增强】混合检索+重排序策略：实现稠密向量检索+稀疏BM25+关键词混合策略，引入ReRanker二次排序，MRR@10指标提升15%
+
+  \item 【系统设计】多租户隔离架构：基于Elasticsearch+MinIO设计独立知识库管理方案，支持100+并发用户的资源隔离与安全访问
+
+  \item 【对话增强】多轮Agent实现：基于LangGraph开发复杂查询分解、子问题并行检索与结果合并机制，显著提升复杂问题的回答质量
+
+\end{itemize}
+
+
+\noindent\textbf{MetaGPT — 多Agent协作框架} \hfill \textcolor{lightgray}{2026.01 - 2026.03}\\
+\textit{ICLR 2024 Oral开源项目，模拟软件公司流程的多Agent协作框架，支持产品经理→架构师→程序员→QA自动化协作}\\
+技术栈: Python, Multi-Agent, LangGraph, MCP, Prompt Engineering
+\begin{itemize}
+
+  \item 【需求实现】数据分析Agent团队开发：设计DataCollector→Analyst→Visualizer→Reporter四角色协作流程，自动化完成从数据采集到报告生成的全流程
+
+  \item 【性能优化】通信效率提升：引入基于语义相似度的消息过滤机制优化Agent间通信，减少Token消耗35%，显著降低大模型调用成本
+
+  \item 【生态扩展】MCP工具注册中心：实现自定义Tool Registry，支持动态注册天气/股票/搜索引擎等外部API，通过MCP协议暴露为标准工具
+
+\end{itemize}
+
+
+\noindent\textbf{盘古大模型下游任务微调与部署（规划中）} \hfill \textcolor{lightgray}{2026.04 - 2026.06}\\
+\textit{基于华为云盘古大模型进行下游任务LoRA微调与轻量化部署，探索盘古模型在垂直领域的应用}\\
+技术栈: 盘古大模型, 华为云ModelArts, LoRA微调, vLLM, ONNX Runtime, ModelArts
+\begin{itemize}
+
+  \item 【业务适配】盘古模型微调：基于华为云盘古大模型API，使用LoRA技术对垂直领域任务进行高效微调，探索模型在特定业务场景的定制化能力
+
+  \item 【部署优化】轻量化推理：基于vLLM或ONNX Runtime进行模型量化与推理加速，设计RESTful API接口，探索在边缘设备的部署可行性
+
+  \item 【生态集成】华为云服务对接：研究盘古模型与ModelArts、OBS等华为云服务的集成方案，探索端到端的AI应用开发流程
+
+\end{itemize}
+
+
+\noindent\textbf{基于盘古的智能Agent对话系统（规划中）} \hfill \textcolor{lightgray}{2026.05 - 2026.08}\\
+\textit{基于盘古大模型构建具备工具调用、多轮记忆与规划能力的智能Agent系统}\\
+技术栈: 盘古大模型, Function Calling, ReAct, MCP协议, LangChain, Memory机制
+\begin{itemize}
+
+  \item 【架构设计】Agent系统核心模块：设计ReAct循环+工具调用+记忆管理的完整Agent架构，支持复杂任务的分解与执行规划
+
+  \item 【能力扩展】MCP工具生态：基于盘古模型的Function Calling能力，扩展MCP协议工具注册，实现天气查询/代码执行/知识检索等多工具协同
+
+  \item 【场景落地】垂直领域应用：针对特定业务场景设计Prompt模板与工具链，探索盘古Agent在智能客服/数据分析/文档处理等场景的落地
+
+\end{itemize}
+
+
+
+% ===== Keywords =====
+
+\section{关键词}
+\textcolor{lightgray}{\small Python · C++ · PyTorch · Transformer · LLM · NLP · 大模型 · 盘古大模型 · 华为云 · Agent · RAG · 多模态 · RLHF · DPO · LoRA · 推理优化 · KV Cache · Multi-Agent · MCP · Function Calling · LangChain · LangGraph · Tokenizer · Pretrain · SFT}
+
+
+\end{document}

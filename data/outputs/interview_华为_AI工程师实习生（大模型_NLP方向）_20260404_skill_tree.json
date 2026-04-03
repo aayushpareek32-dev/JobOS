@@ -1,0 +1,83 @@
+{
+  "required": [
+    {
+      "skill": "Python",
+      "category": "工程能力",
+      "importance": "高"
+    },
+    {
+      "skill": "C++",
+      "category": "工程能力",
+      "importance": "高"
+    },
+    {
+      "skill": "PyTorch",
+      "category": "算法工具",
+      "importance": "高"
+    },
+    {
+      "skill": "Transformer架构",
+      "category": "LLM/算法",
+      "importance": "高"
+    },
+    {
+      "skill": "LLM/NLP项目经验",
+      "category": "LLM/算法",
+      "importance": "高"
+    },
+    {
+      "skill": "大模型推理优化",
+      "category": "LLM",
+      "importance": "中"
+    },
+    {
+      "skill": "NLP算法开发",
+      "category": "算法",
+      "importance": "中"
+    },
+    {
+      "skill": "Agent系统设计",
+      "category": "Agent",
+      "importance": "中"
+    }
+  ],
+  "preferred": [
+    {
+      "skill": "顶会论文发表",
+      "category": "学术成果",
+      "importance": "中"
+    },
+    {
+      "skill": "竞赛获奖经历",
+      "category": "竞赛",
+      "importance": "中"
+    }
+  ],
+  "basic": [
+    {
+      "skill": "2027届硕士/博士在读",
+      "category": "基础",
+      "importance": "门槛"
+    },
+    {
+      "skill": "熟悉Python/C++编程",
+      "category": "基础",
+      "importance": "门槛"
+    },
+    {
+      "skill": "有LLM/NLP项目经验",
+      "category": "基础",
+      "importance": "门槛"
+    },
+    {
+      "skill": "熟悉Transformer架构",
+      "category": "基础",
+      "importance": "门槛"
+    },
+    {
+      "skill": "华为云/盘古大模型认知",
+      "category": "基础",
+      "importance": "门槛"
+    }
+  ]
+}

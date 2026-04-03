@@ -7,7 +7,6 @@ rich>=13.0.0
 click>=8.1.0
 apscheduler>=3.10.0
 aiosqlite>=0.19.0
-python-jobspy>=1.1.82
 pandas>=2.1.0
 requests>=2.31.0
 beautifulsoup4>=4.12.0
