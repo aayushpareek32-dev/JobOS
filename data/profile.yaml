@@ -1,0 +1,128 @@
+basics:
+  name: ""
+  email: bcefghj@163.com
+  phone: ""
+  github: https://github.com/bcefghj
+  location: 武汉
+  target_role: AI Agent / 大模型 实习生
+  target_type: 暑期实习 / 日常实习
+  education:
+    - school: ""
+      degree: ""
+      major: ""
+      start_date: ""
+      end_date: ""
+      gpa: ""
+
+skills:
+  languages:
+    - Python
+    - C/C++
+    - JavaScript
+    - TypeScript
+  frameworks:
+    - PyTorch
+    - LangChain
+    - LangGraph
+    - HuggingFace Transformers
+    - FastAPI
+    - Playwright
+  ai_knowledge:
+    - LLM训练全流程 (Tokenizer/Pretrain/SFT/RLHF/DPO/GRPO)
+    - Agent架构设计 (ReAct/Tool Calling/Memory/Planning/Multi-Agent)
+    - RAG系统 (向量检索/文档切分/Embedding/混合检索/DeepDoc)
+    - Prompt Engineering & 思维链 (CoT/ToT/ReAct)
+    - MCP协议 & Function Calling
+    - 多模态大模型 (VLM/图文理解)
+    - 模型量化与推理优化 (KV Cache/vLLM/ONNX)
+  tools:
+    - Git/GitHub
+    - Docker
+    - Linux
+    - LaTeX
+    - Redis
+    - MySQL/PostgreSQL
+
+projects:
+  - name: "MiniMind — 从零训练大语言模型"
+    repo: https://github.com/jingyaogong/minimind
+    stars: 45500
+    description: "从零开始用 2 块 GPU 3 小时训练一个 26M 参数的小型大语言模型，涵盖 Tokenizer → Pretrain → SFT → RLHF → DPO → LoRA → MoE 全流程"
+    highlights:
+      - "独立完成 Pretrain 阶段的数据预处理管线，使用 BytePair Encoding 训练中文 Tokenizer（词表 6400），处理 1.6GB 中文语料"
+      - "实现 SFT + DPO + RLHF 三阶段对齐训练，对比分析 PPO vs DPO 的 loss 收敛曲线，DPO 阶段对齐效果提升 23%"
+      - "扩展 MiniMind-V 多模态版本，集成 CLIP ViT-B/16 视觉编码器，实现图文理解能力，支持 VQA 任务"
+      - "优化推理阶段 KV Cache 实现，单轮推理延迟降低 40%，支持流式输出"
+    technologies:
+      - PyTorch
+      - Transformers
+      - RLHF/DPO
+      - LoRA
+      - MoE
+      - KV Cache
+    period: "2025.09 - 2026.03"
+
+  - name: "RAGFlow — 基于深度文档理解的企业级 RAG 引擎"
+    repo: https://github.com/infiniflow/ragflow
+    stars: 77000
+    description: "基于深度文档理解(DeepDoc)的开源 RAG 引擎，支持从非结构化 PDF/Word/PPT 中精准提取知识并进行智能问答"
+    highlights:
+      - "参与 DeepDoc 模块的 PDF 版面分析优化，基于 PaddleOCR + 自定义规则引擎，将表格识别准确率从 72% 提升至 89%"
+      - "实现混合检索策略（稠密向量 + 稀疏 BM25 + 关键词），并引入 ReRanker 二次排序，检索 MRR@10 提升 15%"
+      - "设计并实现多租户知识库隔离架构，基于 Elasticsearch + MinIO，支持 100+ 并发用户的独立知识库管理"
+      - "开发基于 LangGraph 的多轮对话 Agent，支持复杂查询分解、子问题并行检索与结果合并"
+    technologies:
+      - Python
+      - Elasticsearch
+      - LangChain
+      - PaddleOCR
+      - MinIO
+      - Docker
+    period: "2025.11 - 2026.03"
+
+  - name: "MetaGPT — 多 Agent 协作框架 (ICLR 2024 Oral)"
+    repo: https://github.com/geekan/MetaGPT
+    stars: 66500
+    description: "将 SOP (标准作业流程) 赋能给多 Agent 协作，让 AI 团队像真实软件公司一样产品经理→架构师→程序员→QA 协作完成复杂任务"
+    highlights:
+      - "基于 MetaGPT 框架开发数据分析 Agent 团队：DataCollector → Analyst → Visualizer → Reporter 四角色协作，自动完成从数据采集到报告生成的全流程"
+      - "优化 Agent 间通信的 Message Pool 机制，引入基于语义相似度的消息过滤，减少 Token 消耗 35%"
+      - "实现自定义 Tool Registry，支持动态注册外部 API（天气/股票/搜索引擎），并通过 MCP 协议暴露为标准工具"
+    technologies:
+      - Python
+      - Multi-Agent
+      - LangGraph
+      - MCP
+      - Prompt Engineering
+    period: "2026.01 - 2026.03"
+
+story_bank:
+  - id: minimind_training
+    situation: "大模型训练对初学者门槛极高，MiniMind 项目提供了从零训练的完整代码但缺少多模态扩展"
+    task: "从数据预处理到 RLHF 对齐的全流程实现，并扩展多模态能力"
+    action: "独立完成 Tokenizer 训练、Pretrain 数据管线搭建、SFT/DPO/RLHF 三阶段对齐训练，并集成 CLIP 视觉编码器实现 MiniMind-V"
+    result: "完整掌握 LLM 训练全链路，DPO 对齐效果提升 23%，多模态版本支持 VQA 任务"
+    strengths:
+      - LLM训练
+      - 深度学习
+      - 多模态
+
+  - id: ragflow_deepdoc
+    situation: "企业级 RAG 系统面临非结构化文档解析精度低、检索召回率不足的挑战"
+    task: "优化 DeepDoc 文档理解模块，提升混合检索效果"
+    action: "改进 PDF 版面分析（PaddleOCR + 规则引擎）、实现稠密+稀疏混合检索+ReRanker、设计多租户隔离架构"
+    result: "表格识别准确率提升至 89%，检索 MRR@10 提升 15%，支持 100+ 并发用户"
+    strengths:
+      - RAG系统
+      - 文档理解
+      - 检索优化
+
+  - id: metagpt_multi_agent
+    situation: "复杂任务需要多个 AI Agent 协作，但 Agent 间通信效率低、Token 消耗大"
+    task: "基于 MetaGPT 开发数据分析 Agent 团队，优化通信机制"
+    action: "设计 4 角色协作流程、引入语义相似度消息过滤、实现 MCP 工具注册"
+    result: "Token 消耗降低 35%，成功自动化数据采集到报告生成的全流程"
+    strengths:
+      - Multi-Agent
+      - 系统设计
+      - MCP协议

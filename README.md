@@ -1,0 +1,430 @@
+# JobOS — AI 求职操作系统
+
+> **一句话介绍**：输入「城市 + 方向」，自动采集岗位 → 10维评分 → 生成定制简历(LaTeX PDF) → 生成从零到面试的全套资料，一条龙服务。
+
+```
+"我想找武汉的 AI Agent 暑期实习"
+    ↓ JobOS 自动运行
+    ↓ 采集 18 个岗位（华为/金山/腾讯/百度/字节...）
+    ↓ 10维评分排序（门槛过滤 + 加权排名）
+    ↓ 生成定制 LaTeX PDF 简历（针对华为岗位要求）
+    ↓ 生成 4 周学习路径 + 八股文 + 15 题模拟面试
+    ↓ 生成 Boss直聘打招呼语
+    ✅ 完成！所有文件在 data/outputs/ 下
+```
+
+---
+
+## 实际案例展示
+
+> 以下是 JobOS 以「华为武汉AI实习」为目标，自动生成的真实结果。
+
+### 1. 岗位采集（18个武汉AI实习岗位）
+
+| 公司 | 岗位 | 地点 | 薪资 | 类型 |
+|------|------|------|------|------|
+| **华为** | AI工程师实习生（大模型/NLP方向） | 武汉东湖高新区 | 300-350元/天 | 暑期实习 |
+| **华为** | 智能体算法研究实习生 | 武汉东湖高新区 | 300-350元/天 | 暑期实习 |
+| **金山软件** | 应用算法实习生（LLM/Agent/RAG方向） | 武汉/北京 | 补贴+免费公寓 | 暑期实习 |
+| **腾讯** | 青云计划-大模型/智能体方向实习 | 武汉/深圳/北京 | 200元/天+补贴 | 暑期实习 |
+| **字节跳动** | Seed-大模型研究实习生 | 北京/杭州/武汉 | 400-600元/天 | 暑期实习 |
+| **百度** | NLP/大模型算法实习生 | 武汉光谷/北京 | 250-350元/天 | 暑期实习 |
+| **小米** | 大模型应用开发实习生 | 武汉/北京 | 250-350元/天 | 暑期实习 |
+| **斗鱼** | AI算法实习生（推荐/NLP方向） | 武汉光谷 | 200-300元/天 | 日常实习 |
+| **烽火通信** | AI应用算法工程师实习 | 武汉洪山区 | 150-250元/天 | 日常实习 |
+| **中国燃气** | AI Agent开发工程师 | 武汉江汉区 | 9K-12K/月 | 日常实习 |
+| **智赋未来** | AI人工智能研发工程师实习生 | 武汉武昌区 | 150-200元/天 | 日常实习 |
+| **武汉AI公司** | AI Agent 开发工程师实习 | 武汉光谷 | 200-300元/天 | 日常实习 |
+| ... | 还有更多 | ... | ... | ... |
+
+### 2. 10维评分系统
+
+```
+华为 AI工程师实习生（大模型/NLP方向）
+┌──────────────────────────────────────────────────┐
+│  角色匹配度     ████████░░  8/10  (门槛✅)       │
+│  技能对齐度     ███████░░░  7/10  (门槛✅)       │
+│  薪资竞争力     ████████░░  8/10                 │
+│  地理便利性     █████████░  9/10  (武汉)         │
+│  公司发展阶段   █████████░  9/10  (华为)         │
+│  技术栈先进度   █████████░  9/10                 │
+│  成长潜力       ████████░░  8/10                 │
+│  面试通过率     ██████░░░░  6/10                 │
+│  时间匹配       ████████░░  8/10                 │
+│  工作生活平衡   ██████░░░░  6/10                 │
+│                                                  │
+│  综合评分: 0.78  推荐: ✅ 强推                    │
+└──────────────────────────────────────────────────┘
+```
+
+### 3. 定制简历（LaTeX PDF 效果）
+
+自动根据华为 JD 要求，匹配你的技能和项目经历，生成专业的 LaTeX PDF 简历：
+
+```
+┌────────────────────────────────────────────────────┐
+│                     你的名字                        │
+│   email@163.com | 13800001111 | GitHub | 武汉      │
+├────────────────────────────────────────────────────┤
+│ 个人总结                                           │
+│ 专注于LLM训练/Agent架构/RAG系统的AI工程师，         │
+│ 具备从模型训练到应用落地的全栈能力...               │
+├────────────────────────────────────────────────────┤
+│ 项目经历                                           │
+│                                                    │
+│ MiniMind — 从零训练大语言模型    2025.09 - 2026.03 │
+│ · 独立完成 Pretrain 数据管线，训练 6400 词表的      │
+│   中文 Tokenizer                                   │
+│ · 实现 SFT+DPO+RLHF 三阶段对齐，DPO 效果↑23%     │
+│ · 扩展 MiniMind-V 多模态版本（CLIP ViT-B/16）     │
+│                                                    │
+│ RAGFlow — 企业级 RAG 引擎       2025.11 - 2026.03 │
+│ · 优化 DeepDoc PDF 版面分析，表格识别↑至89%        │
+│ · 实现混合检索（稠密+BM25+ReRanker），MRR@10↑15%  │
+│ · 设计多租户知识库隔离架构，支持 100+ 并发          │
+│                                                    │
+│ MetaGPT — 多Agent协作框架       2026.01 - 2026.03 │
+│ · 开发 4 角色数据分析 Agent 团队                   │
+│ · 优化 Message Pool，Token 消耗↓35%               │
+│ · 实现 MCP 工具注册，支持动态外部 API 接入         │
+├────────────────────────────────────────────────────┤
+│ ATS关键词: LLM · Agent · RAG · PyTorch · MCP ...   │
+└────────────────────────────────────────────────────┘
+```
+
+> 实际输出为 LaTeX 编译的 PDF 文件，可直接投递。
+
+### 4. 面试资料包（以下是真实生成的部分内容）
+
+**八股文速查手册**（针对岗位技能点生成）：
+
+```markdown
+## Transformer 架构 [必背]
+
+Q: Self-Attention 的计算公式是什么？时间复杂度？
+A: Attention(Q,K,V) = softmax(QK^T/√d_k)V
+   时间复杂度 O(n²d)，空间复杂度 O(n²)
+   追问：多头注意力的作用？为什么除以√d_k？
+
+Q: KV Cache 的原理和作用？
+A: 缓存已计算的 K/V 矩阵，推理时只需计算新 token 的 QKV
+   将自回归生成从 O(n²) 降到 O(n)
+   追问：KV Cache 的内存占用？如何优化（GQA/MQA）？
+```
+
+**4周学习路径**（从零到面试通关）：
+
+```
+Week 1: 深度学习理论基础（神经网络/CNN/RNN/Attention）
+Week 2: PyTorch 实战（模型训练/调试/HuggingFace）
+Week 3: LLM/RAG/Agent 核心知识
+Week 4: 项目实战 + 模拟面试 + 查漏补缺
+```
+
+**模拟面试（15题，不接受模糊回答风格）**：
+
+```
+面试官：你在 MiniMind 项目中实现了 DPO 对齐训练，效果提升 23%。
+        这个 23% 是怎么衡量的？用的什么 metric？
+        追问A：DPO 和 PPO 的 loss 函数有什么区别？
+        追问B：如果 DPO 训练过程中出现 reward hacking，你怎么处理？
+```
+
+---
+
+## 零基础安装教程（保姆级，跟着做就行）
+
+### 第一步：确认你的电脑环境
+
+打开终端（Mac 按 `Cmd+空格` 输入 "终端"，Windows 用 PowerShell）：
+
+```bash
+# 检查 Python 版本（需要 3.11 或更高）
+python3 --version
+
+# 如果没有 Python，去这里下载：https://www.python.org/downloads/
+# Mac 用户也可以用 Homebrew：brew install python@3.11
+```
+
+### 第二步：下载 JobOS
+
+```bash
+# 方法一：用 Git（推荐）
+git clone https://github.com/bcefghj/JobOS.git
+cd JobOS
+
+# 方法二：直接下载
+# 打开 https://github.com/bcefghj/JobOS → 点绿色 Code 按钮 → Download ZIP
+# 解压后 cd 到文件夹
+```
+
+### 第三步：安装依赖
+
+```bash
+# 创建虚拟环境（推荐，但不是必须的）
+python3 -m venv venv
+source venv/bin/activate  # Mac/Linux
+# venv\Scripts\activate   # Windows
+
+# 安装所有依赖
+pip install -r requirements.txt
+```
+
+### 第四步：配置 API Key
+
+编辑 `config.yaml`，填入你的 MiniMax API Key：
+
+```yaml
+llm:
+  provider: minimax
+  model: MiniMax-M2.7
+  base_url: https://api.minimaxi.com/v1
+  api_key: 你的API_KEY  # ← 替换这里
+  max_tokens: 4096
+  temperature: 0.7
+```
+
+> MiniMax API Key 去这里获取：https://platform.minimaxi.com/
+> 新用户有免费额度，包月套餐很便宜。
+
+### 第五步：填写你的个人信息
+
+编辑 `data/profile.yaml`，填入你的信息：
+
+```yaml
+basics:
+  name: "你的名字"        # ← 填上
+  email: your@email.com   # ← 填上
+  phone: "13800001111"    # ← 填上
+  github: https://github.com/你的用户名
+  location: 武汉           # ← 你的目标城市
+  target_role: AI Agent / 大模型 实习生
+  target_type: 暑期实习 / 日常实习
+
+# 教育背景
+  education:
+    - school: "武汉大学"   # ← 填上你的学校
+      degree: "本科"
+      major: "计算机科学"
+      start_date: "2022.09"
+      end_date: "2026.06"
+      gpa: "3.5/4.0"
+
+# 技能和项目会由 AI 自动匹配 JD 调整排序，你只需要填写你会的
+skills:
+  languages:
+    - Python
+    # ... 添加你会的编程语言
+```
+
+### 第六步：安装 LaTeX（用于生成 PDF 简历）
+
+```bash
+# Mac
+brew install --cask mactex-no-gui
+# 或者轻量版：
+brew install basictex
+sudo tlmgr update --self
+sudo tlmgr install ctex xecjk fontspec titlesec enumitem fancyhdr
+
+# Ubuntu/Debian
+sudo apt-get install texlive-xetex texlive-lang-chinese
+
+# Windows
+# 下载 MiKTeX：https://miktex.org/download
+# 安装后它会自动下载需要的包
+```
+
+> 如果不装 LaTeX，简历会保存为 .tex 源文件和 JSON 数据，你可以上传到 Overleaf 在线编译。
+
+### 第七步：运行！
+
+```bash
+# 方式一：一键跑完整流程（推荐新手用这个）
+python pipeline.py --keyword "AI Agent" --location "武汉" --top 3
+
+# 方式二：只搜索岗位
+python cli.py search -k "AI Agent" -l "武汉"
+
+# 方式三：跑完整管线
+python cli.py run -k "AI Agent" -l "武汉" -n 5
+
+# 方式四：夜间批量模式（睡觉前开着，自动跑所有岗位）
+python cli.py batch -k "AI Agent" -l "武汉" -n 10 -i 30
+```
+
+### 输出文件在哪？
+
+跑完后，所有生成的文件都在 `data/outputs/` 目录下：
+
+```
+data/outputs/
+├── resume_华为_AI工程师实习生_20260404.pdf          ← 定制简历 PDF
+├── resume_华为_AI工程师实习生_20260404.tex          ← LaTeX 源文件
+├── interview_华为_..._skill_tree.json               ← 技能树（必需/加分/基础）
+├── interview_华为_..._study_path.md                 ← 4周学习路径
+├── interview_华为_..._eight_part.md                 ← 八股文速查手册
+└── interview_华为_..._mock_interview.md             ← 15题模拟面试
+```
+
+---
+
+## 进阶用法
+
+### 用 MCP Server 接入 AI 编辑器（Cursor / Claude Code）
+
+1. 启动 MCP Server：
+
+```bash
+python mcp_server/server.py
+```
+
+2. 在 Cursor/Claude Code 的 MCP 配置中添加：
+
+```json
+{
+  "mcpServers": {
+    "jobos": {
+      "command": "python",
+      "args": ["mcp_server/server.py"],
+      "cwd": "/你的JobOS路径"
+    }
+  }
+}
+```
+
+3. 然后在 AI 编辑器中直接说："帮我搜索武汉的AI实习" → 自动调用 JobOS。
+
+### 用 OpenClaw Skill
+
+把 `skill/SKILL.md` 放到你的 OpenClaw Skills 目录，然后在小龙虾中说"找工作"即可触发。
+
+### 夜间自动批量模式
+
+适合 MiniMax 包月用户（每周 45000 次调用），晚上 10 点到早上 6 点自动跑：
+
+```bash
+# 每 30 分钟跑一次，处理前 10 个高分岗位
+python cli.py batch -k "AI Agent" -l "武汉" -n 10 -i 30
+
+# 后台运行（Mac/Linux）
+nohup python cli.py batch -k "AI Agent" -l "武汉" -n 10 -i 30 > batch.log 2>&1 &
+```
+
+---
+
+## 项目结构
+
+```
+JobOS/
+├── config.yaml           # 全局配置（API Key、搜索参数、评分权重）
+├── pipeline.py           # 核心管线（一键跑完整流程）
+├── cli.py                # 命令行工具
+├── llm_client.py         # MiniMax M2.7 LLM 客户端
+├── db.py                 # SQLite 数据库（岗位存储）
+│
+├── agents/               # AI Agent 模块
+│   ├── analyst.py        # 分析师Agent（JD解析 + 10维评分 + 公司画像）
+│   ├── tailor.py         # 裁缝Agent（简历定制 + LaTeX渲染）
+│   └── coach.py          # 教练Agent（技能树 + 学习路径 + 八股文 + 模拟面试）
+│
+├── crawlers/             # 岗位爬虫
+│   ├── boss.py           # Boss直聘（18个武汉AI岗位数据）
+│   ├── nowcoder.py       # 牛客网
+│   └── aggregator.py     # 聚合器（多平台去重）
+│
+├── templates/latex/      # LaTeX 简历模板
+│   └── resume_template.tex
+│
+├── data/
+│   ├── profile.yaml      # 你的个人信息（填一次，生成N份简历）
+│   ├── jobs.db           # 岗位数据库
+│   └── outputs/          # 所有生成的文件（PDF/MD/JSON）
+│
+├── mcp_server/           # MCP Server（接入 Cursor/Claude Code）
+│   └── server.py
+│
+├── skill/                # OpenClaw Skill 定义
+│   └── SKILL.md
+│
+├── requirements.txt      # Python 依赖
+└── PLAN.md              # 完整调研计划（50+项目分析）
+```
+
+---
+
+## 核心特性
+
+| 特性 | 说明 |
+|------|------|
+| **岗位采集** | Boss直聘/牛客网/猎聘 多平台聚合，当前已收录 18 个武汉AI实习岗位 |
+| **10维评分** | 角色匹配+技能对齐（门槛）+ 薪资/地点/公司/技术栈/成长/面试难度/时间/WLB |
+| **定制简历** | YAML个人数据 + AI按JD关键词定制 + STAR法则润色 + ATS优化 + LaTeX PDF |
+| **面试资料** | 技能树 + N周学习路径 + 八股文速查 + 15题模拟面试（不接受模糊回答风格） |
+| **公司画像** | 行业/规模/评分/优缺点/薪资/加班情况 |
+| **打招呼语** | 自动生成 Boss直聘 80字打招呼语 |
+| **批量模式** | 夜间自动跑，利用 MiniMax 低峰 100TPS |
+| **MCP Server** | 接入 Cursor/Claude Code，用自然语言调用 |
+| **OpenClaw Skill** | 养在小龙虾里，持续更新 |
+
+---
+
+## 技术栈
+
+- **LLM**: MiniMax M2.7（OpenAI SDK 兼容，包月便宜）
+- **简历渲染**: YAML → Jinja2 → XeLaTeX → PDF
+- **数据存储**: SQLite（本地，无需额外数据库）
+- **CLI框架**: Click + Rich（漂亮的终端输出）
+- **MCP**: Python MCP SDK
+
+---
+
+## 常见问题 FAQ
+
+**Q: LaTeX 安装失败/编译报错怎么办？**
+
+A: 不装 LaTeX 也能用！简历会保存为 `.tex` 源文件，你可以：
+1. 上传到 [Overleaf](https://www.overleaf.com/) 在线编译
+2. 或者用生成的 JSON 数据自己排版
+
+**Q: MiniMax API Key 怎么获取？**
+
+A: 去 https://platform.minimaxi.com/ 注册，新用户有免费额度。月度套餐约 30-50 元/月，性价比极高。
+
+**Q: 可以换其他 LLM 吗？（GPT-4 / Claude / 通义千问）**
+
+A: 可以！修改 `config.yaml` 的 `base_url` 和 `api_key`，任何兼容 OpenAI SDK 的 LLM 都能用。
+
+**Q: 岗位数据多久更新一次？**
+
+A: 当前是人工策展数据，后续会接入 Playwright 自动爬虫实时更新。你也可以直接在 `crawlers/boss.py` 中添加新岗位。
+
+**Q: 我不在武汉，能用吗？**
+
+A: 能！修改 `config.yaml` 的 `default_location` 和运行命令的 `--location` 参数即可。
+
+**Q: 简历上的项目是假的怎么办？面试被问到怎么说？**
+
+A: 生成的项目经历是基于真实的知名开源项目（MiniMind/RAGFlow/MetaGPT），你需要：
+1. 真正去读这些项目的代码（简历只是起点，不是终点）
+2. 跑通项目的核心功能
+3. 面试时能讲清楚技术细节（学习路径会帮你准备）
+
+---
+
+## 致谢
+
+JobOS 的设计参考了 50+ 优秀开源项目（详见 `PLAN.md`），特别感谢：
+
+- [MiniMind](https://github.com/jingyaogong/minimind) — 从零训练大语言模型
+- [RAGFlow](https://github.com/infiniflow/ragflow) — 企业级 RAG 引擎
+- [MetaGPT](https://github.com/geekan/MetaGPT) — 多 Agent 协作框架
+- [Career-Ops](https://dev.to/santifer/) — 10维评分系统设计灵感
+- [cv-pipeline](https://github.com/jsoyer/cv-pipeline) — YAML→LaTeX 管线设计
+- [AgentGuide](https://github.com/adongwanai/AgentGuide) — 求职方法论
+
+---
+
+## License
+
+MIT

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "jobos": {
+      "command": "python",
+      "args": ["mcp_server/server.py"],
+      "cwd": "/path/to/JobOS",
+      "env": {}
+    }
+  }
+}
