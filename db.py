@@ -9,6 +9,22 @@ from datetime import datetime
 
 DB_PATH = Path(__file__).parent / "data" / "jobs.db"
 
+_MIGRATE_COLUMNS = [
+    ("skills", "TEXT"),
+    ("degree", "TEXT"),
+    ("experience", "TEXT"),
+    ("company_size", "TEXT"),
+    ("company_industry", "TEXT"),
+    ("company_stage", "TEXT"),
+    ("welfare", "TEXT"),
+    ("hr_name", "TEXT"),
+    ("hr_title", "TEXT"),
+    ("chat_url", "TEXT"),
+    ("full_jd", "TEXT"),
+    ("deadline", "TEXT"),
+    ("source_url", "TEXT"),
+]
+
 
 def get_conn() -> sqlite3.Connection:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -37,6 +53,19 @@ def init_db():
             score REAL,
             score_details TEXT,
             status TEXT DEFAULT 'new',
+            skills TEXT,
+            degree TEXT,
+            experience TEXT,
+            company_size TEXT,
+            company_industry TEXT,
+            company_stage TEXT,
+            welfare TEXT,
+            hr_name TEXT,
+            hr_title TEXT,
+            chat_url TEXT,
+            full_jd TEXT,
+            deadline TEXT,
+            source_url TEXT,
             UNIQUE(platform, job_id)
         );
 
@@ -78,7 +107,18 @@ def init_db():
         );
     """)
     conn.commit()
+    _migrate_add_columns(conn)
     conn.close()
+
+
+def _migrate_add_columns(conn: sqlite3.Connection):
+    """Add new columns to existing jobs table without losing data."""
+    cursor = conn.execute("PRAGMA table_info(jobs)")
+    existing = {row[1] for row in cursor.fetchall()}
+    for col_name, col_type in _MIGRATE_COLUMNS:
+        if col_name not in existing:
+            conn.execute(f"ALTER TABLE jobs ADD COLUMN {col_name} {col_type}")
+    conn.commit()
 
 
 def insert_job(
@@ -86,16 +126,28 @@ def insert_job(
     job_id: str = "", location: str = "", salary: str = "",
     job_type: str = "", description: str = "", requirements: str = "",
     url: str = "", posted_date: str = "",
+    skills: str = "", degree: str = "", experience: str = "",
+    company_size: str = "", company_industry: str = "",
+    company_stage: str = "", welfare: str = "",
+    hr_name: str = "", hr_title: str = "", chat_url: str = "",
+    full_jd: str = "", deadline: str = "", source_url: str = "",
 ) -> int | None:
     conn = get_conn()
     try:
         cur = conn.execute(
             """INSERT OR IGNORE INTO jobs
                (platform, job_id, title, company, location, salary, job_type,
-                description, requirements, url, posted_date)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                description, requirements, url, posted_date,
+                skills, degree, experience, company_size, company_industry,
+                company_stage, welfare, hr_name, hr_title, chat_url,
+                full_jd, deadline, source_url)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                       ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (platform, job_id or f"{company}_{title}", title, company, location,
-             salary, job_type, description, requirements, url, posted_date),
+             salary, job_type, description, requirements, url, posted_date,
+             skills, degree, experience, company_size, company_industry,
+             company_stage, welfare, hr_name, hr_title, chat_url,
+             full_jd, deadline, source_url),
         )
         conn.commit()
         return cur.lastrowid
@@ -113,7 +165,8 @@ def update_job_score(job_db_id: int, score: float, details: dict):
     conn.close()
 
 
-def get_jobs(*, min_score: float | None = None, status: str | None = None, limit: int = 100) -> list[dict]:
+def get_jobs(*, min_score: float | None = None, status: str | None = None,
+             platform: str | None = None, limit: int = 100) -> list[dict]:
     conn = get_conn()
     sql = "SELECT * FROM jobs WHERE 1=1"
     params: list = []
@@ -123,7 +176,10 @@ def get_jobs(*, min_score: float | None = None, status: str | None = None, limit
     if status:
         sql += " AND status = ?"
         params.append(status)
-    sql += " ORDER BY score DESC LIMIT ?"
+    if platform:
+        sql += " AND platform = ?"
+        params.append(platform)
+    sql += " ORDER BY score DESC NULLS LAST, scraped_at DESC LIMIT ?"
     params.append(limit)
     rows = conn.execute(sql, params).fetchall()
     conn.close()
@@ -135,6 +191,14 @@ def get_job_by_id(job_db_id: int) -> dict | None:
     row = conn.execute("SELECT * FROM jobs WHERE id=?", (job_db_id,)).fetchone()
     conn.close()
     return dict(row) if row else None
+
+
+def get_all_jobs_df():
+    """Return all jobs as a pandas-friendly list of dicts."""
+    conn = get_conn()
+    rows = conn.execute("SELECT * FROM jobs ORDER BY score DESC NULLS LAST, scraped_at DESC").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
 
 
 init_db()

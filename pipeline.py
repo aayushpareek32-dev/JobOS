@@ -26,13 +26,19 @@ console = Console()
 OUTPUT_DIR = Path(__file__).parent / "data" / "outputs"
 
 
-def step_collect(keyword: str = "AI Agent", location: str = "武汉") -> list[dict]:
+def step_collect(keyword: str = "AI Agent", location: str = "武汉",
+                 platforms: list[str] | None = None) -> list[dict]:
     """Step 1: Collect jobs from all platforms."""
-    console.print("\n[bold cyan]═══ Step 1: 岗位采集 ═══[/]")
-    jobs = collect_all_jobs(keyword, location)
+    console.print("\n[bold cyan]═══ Step 1: 岗位采集（多平台真实爬虫） ═══[/]")
+
+    platform_names = ", ".join(platforms) if platforms else "boss + nowcoder + liepin + curated"
+    console.print(f"  平台: {platform_names}")
+
+    jobs = collect_all_jobs(keyword, location, platforms=platforms)
     console.print(f"[green]✓[/] 采集到 {len(jobs)} 个岗位")
 
     table = Table(title="采集结果", show_lines=True)
+    table.add_column("#", style="dim", width=4)
     table.add_column("公司", style="bold")
     table.add_column("岗位")
     table.add_column("地点")
@@ -40,9 +46,9 @@ def step_collect(keyword: str = "AI Agent", location: str = "武汉") -> list[di
     table.add_column("类型")
     table.add_column("平台")
 
-    for j in jobs:
+    for i, j in enumerate(jobs, 1):
         table.add_row(
-            j["company"], j["title"], j.get("location", ""),
+            str(i), j["company"], j["title"], j.get("location", ""),
             j.get("salary", ""), j.get("job_type", ""), j["platform"],
         )
 
@@ -58,7 +64,7 @@ def step_analyze_and_score(jobs: list[dict]) -> list[dict]:
     for i, job in enumerate(jobs):
         console.print(f"  [{i+1}/{len(jobs)}] 分析: {job['company']} - {job['title']}")
 
-        jd_text = f"岗位: {job['title']}\n公司: {job['company']}\n地点: {job.get('location','')}\n薪资: {job.get('salary','')}\n描述: {job.get('description','')}\n要求: {job.get('requirements','')}"
+        jd_text = f"岗位: {job['title']}\n公司: {job['company']}\n地点: {job.get('location','')}\n薪资: {job.get('salary','')}\n描述: {job.get('description','')}\n要求: {job.get('requirements','')}\n技能: {job.get('skills','')}"
         try:
             jd_info = analyze_jd(jd_text)
             total, details = score_job(jd_info)
@@ -97,6 +103,20 @@ def step_analyze_and_score(jobs: list[dict]) -> list[dict]:
 
     console.print(table)
     return scored
+
+
+def step_export(jobs: list[dict]) -> Path | None:
+    """Step 2.5: Export jobs to Excel."""
+    console.print("\n[bold cyan]═══ Step 2.5: 导出 Excel ═══[/]")
+    try:
+        from export.excel import export_excel
+        ts = datetime.now().strftime("%Y%m%d_%H%M")
+        path = export_excel(jobs, OUTPUT_DIR / f"jobs_{ts}.xlsx")
+        console.print(f"[green]✓[/] Excel 导出: {path}")
+        return path
+    except Exception as e:
+        console.print(f"[yellow]⚠ Excel 导出失败: {e}[/]")
+        return None
 
 
 def step_company_profile(job: dict) -> dict:
@@ -202,7 +222,8 @@ def step_interview_prep(job: dict, resume_data: dict | None = None) -> dict:
         return {}
 
 
-def run_pipeline(keyword: str = "AI Agent", location: str = "武汉", top_n: int = 3):
+def run_pipeline(keyword: str = "AI Agent", location: str = "武汉", top_n: int = 3,
+                 platforms: list[str] | None = None):
     """Run the full end-to-end pipeline."""
     console.print(Panel(
         f"[bold]JobOS AI 求职全能工具[/]\n"
@@ -212,12 +233,14 @@ def run_pipeline(keyword: str = "AI Agent", location: str = "武汉", top_n: int
         border_style="cyan",
     ))
 
-    jobs = step_collect(keyword, location)
+    jobs = step_collect(keyword, location, platforms)
     if not jobs:
         console.print("[red]没有采集到岗位，结束。[/]")
         return
 
     scored_jobs = step_analyze_and_score(jobs)
+
+    step_export(scored_jobs)
 
     top_jobs = [j for j in scored_jobs if j.get("score", 0) > 0][:top_n]
     if not top_jobs:
@@ -274,6 +297,8 @@ if __name__ == "__main__":
     parser.add_argument("--keyword", default="AI Agent", help="搜索关键词")
     parser.add_argument("--location", default="武汉", help="目标城市")
     parser.add_argument("--top", type=int, default=3, help="处理前N个岗位")
+    parser.add_argument("--platform", nargs="*", default=None,
+                        help="指定平台 (boss nowcoder liepin curated)")
     args = parser.parse_args()
 
-    run_pipeline(args.keyword, args.location, args.top)
+    run_pipeline(args.keyword, args.location, args.top, args.platform)
