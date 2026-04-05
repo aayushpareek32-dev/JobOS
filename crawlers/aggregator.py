@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 Platform = Literal["boss", "boss_drission", "nowcoder", "liepin", "curated"]
 
-DEFAULT_PLATFORMS: list[Platform] = ["boss", "nowcoder", "liepin", "curated"]
+DEFAULT_PLATFORMS: list[Platform] = ["boss", "nowcoder", "liepin"]
 
 
 def collect_all_jobs(

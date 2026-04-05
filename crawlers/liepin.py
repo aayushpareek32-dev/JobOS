@@ -218,6 +218,17 @@ def _get_curated_liepin_jobs(keyword: str, city: str) -> list[dict]:
             "source_url": "https://www.liepin.com/",
         },
     ]
-    kw = keyword.lower()
-    return [j for j in known if any(k in f"{j['title']} {j['description']}".lower()
-                                    for k in ["agent", "ai", "大模型", "llm", "rag", kw])]
+    kw_tokens = keyword.lower().replace("/", " ").replace("-", " ").split()
+    city_lower = city.lower()
+
+    results = []
+    for j in known:
+        loc = j.get("location", "").lower()
+        if city_lower and city_lower not in loc and loc not in city_lower:
+            continue
+
+        text = f"{j['title']} {j['description']} {j.get('skills', '')}".lower()
+        if any(tok in text for tok in kw_tokens):
+            results.append(j)
+
+    return results

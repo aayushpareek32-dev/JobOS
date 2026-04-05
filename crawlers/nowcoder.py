@@ -201,9 +201,21 @@ def _get_curated_nowcoder_jobs(keyword: str, city: str) -> list[dict]:
             "source_url": "https://www.nowcoder.com/jobs/detail/434896",
         },
     ]
-    kw = keyword.lower()
-    return [j for j in known if any(k in f"{j['title']} {j['description']}".lower()
-                                    for k in ["agent", "ai", "大模型", "llm", kw])]
+    kw_tokens = keyword.lower().replace("/", " ").replace("-", " ").split()
+    city_lower = city.lower()
+
+    results = []
+    for j in known:
+        loc = j.get("location", "").lower()
+        if city_lower and city_lower not in loc and loc not in city_lower:
+            if city_lower not in "全国":
+                continue
+
+        text = f"{j['title']} {j['description']} {j.get('skills', '')}".lower()
+        if any(tok in text for tok in kw_tokens):
+            results.append(j)
+
+    return results
 
 
 def search_nowcoder_sync(keyword: str = "AI Agent", location: str = "武汉") -> list[dict]:
