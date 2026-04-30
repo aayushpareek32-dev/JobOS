@@ -1,7 +1,8 @@
 """Boss直聘 crawler using DrissionPage (真实浏览器监听API响应).
 
-Backup plan when boss-cli is unavailable. Requires Chrome/Chromium installed.
-First run: browser will open for manual login, cookie persists afterwards.
+Priority fallback when boss-cli is unavailable. Requires Chrome/Chromium installed.
+Supports automatic login detection: if not logged in, opens login page and waits
+for user to scan QR code in the Boss直聘 App.
 
 Install: pip install DrissionPage
 """
@@ -9,6 +10,7 @@ Install: pip install DrissionPage
 from __future__ import annotations
 
 import time
+import json
 import random
 import logging
 from pathlib import Path
@@ -19,9 +21,61 @@ CITY_CODES = {
     "武汉": "101200100", "北京": "101010100", "上海": "101020100",
     "杭州": "101210100", "深圳": "101280600", "广州": "101280100",
     "成都": "101270100", "南京": "101190100", "西安": "101110100",
+    "合肥": "101220100", "重庆": "101040100", "天津": "101030100",
+    "苏州": "101190400", "厦门": "101230200", "长沙": "101250100",
+    "青岛": "101120200", "郑州": "101180100", "大连": "101070200",
+    "宁波": "101210400", "福州": "101230100", "昆明": "101290100",
+    "哈尔滨": "101050100", "济南": "101120100", "沈阳": "101070100",
+    "珠海": "101280700", "佛山": "101280800", "东莞": "101281600",
 }
 
-USER_DATA_DIR = str(Path(__file__).parent.parent / "data" / ".boss_browser")
+USER_DATA_DIR = str(Path(__file__).parent.parent / "data" / ".boss_browser_profile")
+
+
+def _check_login(page) -> bool:
+    """Check if user is logged in on Boss直聘."""
+    try:
+        url = page.url
+        if "user/?ka=header-login" in url or "/web/user/" in url:
+            return False
+        el = page.ele("css:.nav-figure img, css:.user-nav .figure, css:[class*='nav-info']", timeout=3)
+        return el is not None
+    except Exception:
+        return False
+
+
+def _ensure_login(page, *, login_timeout: int = 120) -> bool:
+    """Ensure user is logged in. If not, open login page and wait for QR scan.
+
+    Returns True if login succeeded, False if timed out.
+    """
+    page.get("https://www.zhipin.com/web/geek/job")
+    time.sleep(3)
+
+    if _check_login(page):
+        logger.info("Boss DrissionPage: already logged in")
+        return True
+
+    logger.info("Boss DrissionPage: not logged in, opening login page...")
+    page.get("https://www.zhipin.com/web/user/?ka=header-login")
+    time.sleep(2)
+
+    print("\n" + "=" * 50)
+    print("  请在弹出的浏览器窗口里扫码登录 Boss直聘")
+    print("  (用 Boss直聘 App 扫码，不是微信/QQ)")
+    print("=" * 50 + "\n")
+
+    checks = login_timeout // 2
+    for i in range(checks):
+        time.sleep(2)
+        if _check_login(page):
+            logger.info("Boss DrissionPage: login detected after %ds", (i + 1) * 2)
+            return True
+        if i % 5 == 0 and i > 0:
+            print(f"  等待登录... ({(i + 1) * 2}秒)")
+
+    logger.error("Boss DrissionPage: login timed out after %ds", login_timeout)
+    return False
 
 
 def search_boss_drission(
@@ -30,8 +84,12 @@ def search_boss_drission(
     *,
     max_pages: int = 3,
     delay_range: tuple[float, float] = (3.0, 6.0),
+    auto_login: bool = True,
 ) -> list[dict]:
     """Search Boss直聘 by intercepting API responses in a real browser.
+
+    If auto_login is True (default), will detect login status and prompt
+    user to scan QR code if needed. Cookie persists across runs.
 
     Returns normalized job dicts ready for db.insert_job().
     """
@@ -58,22 +116,32 @@ def search_boss_drission(
     all_jobs: list[dict] = []
 
     try:
+        if auto_login and not _ensure_login(page):
+            logger.error("Login failed, aborting")
+            page.quit()
+            return []
+
         for pg in range(1, max_pages + 1):
             page.listen.start("wapi/zpgeek/search/joblist")
             target = url if pg == 1 else f"{url}&page={pg}"
             page.get(target)
 
             try:
-                packet = page.listen.wait(timeout=15)
+                packet = page.listen.wait(timeout=20)
             except Exception:
                 logger.warning("Page %d: no API response captured", pg)
                 break
 
-            if not packet or not packet.response.body:
+            page.listen.stop()
+
+            if not packet or not packet.response or not packet.response.body:
                 logger.warning("Page %d: empty response", pg)
                 break
 
             body = packet.response.body
+            if isinstance(body, str):
+                body = json.loads(body)
+
             if body.get("code") != 0:
                 logger.warning("Page %d: API error code %s", pg, body.get("code"))
                 break
@@ -100,7 +168,7 @@ def search_boss_drission(
                     "description": j.get("jobName", ""),
                     "requirements": "",
                     "url": f"https://www.zhipin.com/job_detail/{j.get('encryptJobId', '')}.html",
-                    "posted_date": "",
+                    "posted_date": str(j.get("lastModifyTime", "")),
                     "skills": ",".join(j.get("skills", [])),
                     "degree": j.get("jobDegree", ""),
                     "experience": j.get("jobExperience", ""),
@@ -117,8 +185,6 @@ def search_boss_drission(
                 all_jobs.append(job)
 
             logger.info("DrissionPage Boss: page %d got %d jobs", pg, len(job_list))
-
-            page.listen.stop()
 
             if not body.get("zpData", {}).get("hasMore", False):
                 break

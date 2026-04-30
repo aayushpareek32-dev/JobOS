@@ -1,4 +1,11 @@
-"""Job aggregator -- collects from all platforms, deduplicates, and stores."""
+"""Job aggregator -- collects from all platforms, deduplicates, and stores.
+
+Boss直聘 fallback chain:
+  1. boss-cli (kabi-boss-cli, pure HTTP reverse-engineered API)
+  2. DrissionPage (real browser with API interception, auto-login)
+  3. Cookie-based API (manual cookie from browser DevTools)
+  4. Curated data (hardcoded fallback, always works offline)
+"""
 
 from __future__ import annotations
 
@@ -9,7 +16,7 @@ import db
 
 logger = logging.getLogger(__name__)
 
-Platform = Literal["boss", "boss_drission", "nowcoder", "liepin", "curated"]
+Platform = Literal["boss", "boss_drission", "boss_cookie", "nowcoder", "liepin", "curated"]
 
 DEFAULT_PLATFORMS: list[Platform] = ["boss", "nowcoder", "liepin"]
 
@@ -23,12 +30,11 @@ def collect_all_jobs(
 ) -> list[dict]:
     """Collect jobs from selected platforms, store in DB, return list.
 
-    Platform priority:
-      1. boss      -- boss-cli real API (fast, no browser)
-      2. boss_drission -- DrissionPage browser fallback
-      3. nowcoder  -- requests + HTML parsing
-      4. liepin    -- requests + HTML parsing
-      5. curated   -- hardcoded fallback data (always works)
+    Platform priority for "boss":
+      1. boss-cli (fast, no browser, requires `boss login` once)
+      2. DrissionPage (browser-based, auto-login with QR scan)
+      3. cookie-based API (manual cookie extraction)
+      4. curated data (offline fallback)
     """
     if platforms is None:
         platforms = list(DEFAULT_PLATFORMS)
@@ -51,18 +57,17 @@ def collect_all_jobs(
 
 
 def _fetch_platform(platform: str, keyword: str, location: str, max_pages: int) -> list[dict]:
-    """Dispatch to the appropriate crawler."""
+    """Dispatch to the appropriate crawler with full fallback chain for Boss."""
     if platform == "boss":
-        from crawlers.boss_real import search_boss_real
-        jobs = search_boss_real(keyword, location)
-        if not jobs:
-            from crawlers.boss import search_boss_jobs
-            jobs = search_boss_jobs(keyword, location)
-        return jobs
+        return _fetch_boss_with_fallback(keyword, location, max_pages)
 
     elif platform == "boss_drission":
         from crawlers.boss_drission import search_boss_drission
         return search_boss_drission(keyword, location, max_pages=max_pages)
+
+    elif platform == "boss_cookie":
+        from crawlers.boss_cookie import search_boss_with_cookie
+        return search_boss_with_cookie(keyword, location, max_pages=max_pages)
 
     elif platform == "nowcoder":
         from crawlers.nowcoder import search_nowcoder
@@ -79,6 +84,49 @@ def _fetch_platform(platform: str, keyword: str, location: str, max_pages: int) 
     else:
         logger.warning("Unknown platform: %s", platform)
         return []
+
+
+def _fetch_boss_with_fallback(keyword: str, location: str, max_pages: int) -> list[dict]:
+    """Try Boss直聘 crawlers in order: boss-cli → DrissionPage → cookie → curated."""
+
+    # 1. boss-cli
+    try:
+        from crawlers.boss_real import search_boss_real
+        jobs = search_boss_real(keyword, location)
+        if jobs:
+            logger.info("Boss: boss-cli succeeded with %d jobs", len(jobs))
+            return jobs
+        logger.info("Boss: boss-cli returned empty, trying DrissionPage...")
+    except Exception as e:
+        logger.info("Boss: boss-cli failed (%s), trying DrissionPage...", e)
+
+    # 2. DrissionPage (with auto-login)
+    try:
+        from crawlers.boss_drission import search_boss_drission
+        jobs = search_boss_drission(keyword, location, max_pages=max_pages)
+        if jobs:
+            logger.info("Boss: DrissionPage succeeded with %d jobs", len(jobs))
+            return jobs
+        logger.info("Boss: DrissionPage returned empty, trying cookie...")
+    except Exception as e:
+        logger.info("Boss: DrissionPage failed (%s), trying cookie...", e)
+
+    # 3. Cookie-based API
+    try:
+        from crawlers.boss_cookie import search_boss_with_cookie
+        jobs = search_boss_with_cookie(keyword, location, max_pages=max_pages)
+        if jobs:
+            logger.info("Boss: cookie crawler succeeded with %d jobs", len(jobs))
+            return jobs
+        logger.info("Boss: cookie crawler returned empty, using curated data...")
+    except Exception as e:
+        logger.info("Boss: cookie crawler failed (%s), using curated data...", e)
+
+    # 4. Curated fallback
+    from crawlers.boss import search_boss_jobs
+    jobs = search_boss_jobs(keyword, location)
+    logger.info("Boss: curated fallback returned %d jobs", len(jobs))
+    return jobs
 
 
 def _deduplicate(jobs: list[dict]) -> list[dict]:
